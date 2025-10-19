@@ -1,0 +1,58 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: olaclick_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    networks:
+      - olaclick
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=olaclick
+      - DB_USERNAME=olaclick
+      - DB_PASSWORD=secret
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=null
+      - REDIS_PORT=6379
+
+  db:
+    image: postgres:15-alpine
+    container_name: olaclick_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: olaclick
+      POSTGRES_USER: olaclick
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - olaclick
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    container_name: olaclick_redis
+    restart: unless-stopped
+    networks:
+      - olaclick
+    ports:
+      - "6379:6379"
+
+networks:
+  olaclick:
+    driver: bridge
+
+volumes:
+  postgres_data:

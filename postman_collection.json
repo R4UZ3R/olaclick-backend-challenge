@@ -1,0 +1,78 @@
+{
+  "info": {
+    "name": "OlaClick API",
+    "description": "Colección de endpoints de la API OlaClick para gestión de órdenes de restaurante",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Listar Órdenes Activas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/api/orders",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "orders"]
+        },
+        "description": "Retorna todas las órdenes con status != 'delivered'"
+      }
+    },
+    {
+      "name": "Crear Orden",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"client_name\": \"Carlos Gómez\",\n  \"items\": [\n    {\n      \"description\": \"Lomo saltado\",\n      \"quantity\": 1,\n      \"unit_price\": 60\n    },\n    {\n      \"description\": \"Inka Kola\",\n      \"quantity\": 2,\n      \"unit_price\": 10\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/orders",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "orders"]
+        },
+        "description": "Crea una nueva orden con status 'initiated'"
+      }
+    },
+    {
+      "name": "Ver Detalles de Orden",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/api/orders/13",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "orders", "13"]
+        },
+        "description": "Muestra datos completos de una orden incluyendo items y logs"
+      }
+    },
+    {
+      "name": "Avanzar Estado de Orden",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/api/orders/13/advance",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "orders", "13", "advance"]
+        },
+        "description": "Avanza el estado: initiated → sent → delivered (elimina)"
+      }
+    }
+  ]
+}
