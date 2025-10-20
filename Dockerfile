@@ -21,6 +21,14 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Definir diretório de trabalho
 WORKDIR /var/www
 
+# Copiar o projeto Laravel inteiro
+COPY . .
+
+# Instalar dependências do Composer (vendor)
+RUN composer install --no-interaction --optimize-autoloader
+
+# Expor a porta do Laravel
 EXPOSE 8000
 
+# Comando padrão para subir o servidor
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
