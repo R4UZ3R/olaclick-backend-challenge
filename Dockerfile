@@ -1,6 +1,5 @@
 FROM php:8.2-fpm
 
-# Instalar dependências do sistema
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -12,23 +11,26 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && docker-php-ext-install pdo pdo_pgsql pgsql mbstring exif pcntl bcmath gd
 
-# Instalar Redis extension
 RUN pecl install redis && docker-php-ext-enable redis
 
-# Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Definir diretório de trabalho
 WORKDIR /var/www
 
-# Copiar o projeto Laravel inteiro
 COPY . .
 
-# Instalar dependências do Composer (vendor)
+# Copiar .env.example para .env se não existir
+RUN if [ ! -f .env ]; then cp .env.example .env; fi
+
 RUN composer install --no-interaction --optimize-autoloader
 
-# Expor a porta do Laravel
+# Gerar chave se não existir
+RUN php artisan key:generate --ansi
+
+# Ajustar permissões
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 775 storage bootstrap/cache
+
 EXPOSE 8000
 
-# Comando padrão para subir o servidor
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]

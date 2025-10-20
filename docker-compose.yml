@@ -6,9 +6,6 @@ services:
     container_name: olaclick_app
     restart: unless-stopped
     working_dir: /var/www
-    volumes:
-      - ./:/var/www
-      # ❌ NÃO coloque: - /var/www/vendor
     networks:
       - olaclick
     ports:
