@@ -35,6 +35,7 @@ docker-compose up -d --build
 - Genera la clave de la aplicación (`APP_KEY`)
 - Configura permisos necesarios
 
+Aguardar 30-40 segundos para que los contenedores inicialicen completamente.
 
 ### 3. Ejecutar las migraciones
 ```bash
@@ -62,7 +63,7 @@ docker-compose exec app php artisan test
 
 La API estará disponible en: `http://localhost:8000`
 
-**Nota:** Los endpoints que usan método POST deben probarse con Postman, Insomnia o herramientas similares.
+**Nota:** Los endpoints que usan método POST deben probarse con Postman, Insomnia o herramientas similares. Se incluye una [colección de Postman](#-colección-postman) lista para importar con todos los endpoints configurados.
 
 ### Listar Órdenes Activas
 ```
@@ -98,6 +99,8 @@ POST http://localhost:8000/api/orders/{id}/advance
 ```
 
 Transición: `initiated` → `sent` → `delivered` (eliminada)
+
+**💡 Tip:** Para facilitar las pruebas, importa el archivo `postman_collection.json` en Postman (ver sección abajo).
 
 ## 📚 Documentación Swagger
 
@@ -153,9 +156,9 @@ database/
 
 tests/
 ├── Feature/
-│   └── OrderTest.php (8 tests)
+│   └── OrderTest.php
 └── Unit/
-    └── OrderServiceTest.php (3 tests)
+    └── OrderServiceTest.php
 ```
 
 ## 🎯 Funcionalidades Implementadas
@@ -167,7 +170,7 @@ tests/
 - ✅ **Service Layer** con interfaces
 - ✅ **Inyección de Dependencias** en toda la aplicación
 - ✅ **Logs de cambio de estado** con timestamps en tabla dedicada
-- ✅ **Tests automatizados** (11 tests: 8 feature + 3 unit)
+- ✅ **Tests automatizados** (feature + unit)
 - ✅ **Seeders y Factories** para datos de prueba
 - ✅ **Docker Compose** totalmente automatizado
 - ✅ **Documentación Swagger/OpenAPI** interactiva
@@ -175,30 +178,6 @@ tests/
 - ✅ **Cálculo automático** de totales basado en items
 - ✅ **Invalidación automática** de caché al crear/modificar órdenes
 
-## 🏗️ Arquitectura y Principios SOLID
-
-### Single Responsibility Principle (SRP)
-- Cada clase tiene una única responsabilidad
-- Controllers solo manejan HTTP
-- Services contienen lógica de negocio
-- Repositories manejan persistencia
-
-### Open/Closed Principle (OCP)
-- Uso de interfaces permite extensión sin modificación
-- Nuevas implementaciones de repositorios o services pueden ser agregadas fácilmente
-
-### Liskov Substitution Principle (LSP)
-- Las implementaciones de interfaces son intercambiables
-- OrderRepository puede ser reemplazado por otra implementación
-
-### Interface Segregation Principle (ISP)
-- Interfaces específicas y cohesivas
-- OrderRepositoryInterface y OrderServiceInterface tienen métodos específicos
-
-### Dependency Inversion Principle (DIP)
-- Dependencia de abstracciones (interfaces), no de implementaciones concretas
-- Controllers dependen de OrderServiceInterface
-- Services dependen de OrderRepositoryInterface
 
 ## 🛑 Detener los Contenedores
 ```bash
@@ -269,6 +248,12 @@ Se incluye el archivo `postman_collection.json` con todos los endpoints configur
 2. Click en "Import"
 3. Seleccionar el archivo `postman_collection.json`
 4. Todos los endpoints estarán listos para probar
+
+La colección incluye:
+- ✅ GET - Listar órdenes activas
+- ✅ POST - Crear nueva orden (con ejemplo de body)
+- ✅ GET - Ver detalles de orden
+- ✅ POST - Avanzar estado de orden
 
 ## 🐛 Troubleshooting
 
