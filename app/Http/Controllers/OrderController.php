@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateOrderRequest;
-use App\Services\OrderService;
+use App\Services\OrderServiceInterface;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
@@ -24,7 +24,7 @@ use OpenApi\Annotations as OA;
 class OrderController extends Controller
 {
     public function __construct(
-        private OrderService $orderService
+        private OrderServiceInterface $orderService
     ) {}
 
     /**

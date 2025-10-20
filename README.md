@@ -20,8 +20,8 @@ API RESTful para gestión de órdenes de restaurante desarrollada con Laravel, P
 
 ### 1. Clonar el repositorio
 ```bash
-git clone 
-cd olaclick-backend
+git clone https://github.com/R4UZ3R/olaclick-backend-challenge.git
+cd olaclick-backend-challenge
 ```
 
 ### 2. Crear el archivo .env
@@ -42,32 +42,29 @@ REDIS_HOST=redis
 docker-compose up -d --build
 ```
 
-### 4. Instalar dependencias de Laravel
-```bash
-docker-compose exec app composer install
-```
+**Nota:** El Dockerfile ya instala las dependencias de Composer automáticamente.
 
-### 5. Generar la clave de la aplicación
+### 4. Generar la clave de la aplicación
 ```bash
 docker-compose exec app php artisan key:generate
 ```
 
-### 6. Limpiar configuraciones de caché
+### 5. Limpiar configuraciones de caché
 ```bash
 docker-compose exec app php artisan config:clear
 ```
 
-### 7. Ejecutar las migraciones
+### 6. Ejecutar las migraciones
 ```bash
 docker-compose exec app php artisan migrate
 ```
 
-### 8. (Opcional) Ejecutar seeders para datos de prueba
+### 7. (Opcional) Ejecutar seeders para datos de prueba
 ```bash
 docker-compose exec app php artisan db:seed
 ```
 
-### 9. (Opcional) Generar documentación Swagger
+### 8. (Opcional) Generar documentación Swagger
 ```bash
 docker-compose exec app php artisan l5-swagger:generate
 ```
@@ -191,6 +188,7 @@ docker-compose down -v
 - Todos los cambios de estado se registran en la tabla `order_logs` con timestamps
 - El total de la orden se calcula automáticamente basado en los items
 - Se invalida el caché automáticamente al crear o modificar órdenes
+- Las dependencias de Composer se instalan automáticamente durante el build del contenedor
 
 ## 🔧 Comandos Útiles
 ```bash
@@ -211,6 +209,9 @@ docker-compose exec app php artisan test
 
 # Verificar rutas disponibles
 docker-compose exec app php artisan route:list
+
+# Reinstalar dependencias de Composer
+docker-compose exec app composer install
 ```
 
 ## 📮 Colección Postman
@@ -227,10 +228,20 @@ docker-compose exec app php artisan config:clear
 docker-compose restart app
 ```
 
-### Permisos en Windows
+### Problemas con dependencias de Composer
 
-Si hay problemas de permisos, reconstruir la imagen:
+Si hay problemas con vendor o dependencias:
 ```bash
-docker-compose down
+docker-compose exec app composer install
+docker-compose exec app composer dump-autoload
+```
+
+### Rebuild completo
+
+Si algo no funciona, hacer rebuild completo:
+```bash
+docker-compose down -v
 docker-compose up -d --build
+docker-compose exec app php artisan key:generate
+docker-compose exec app php artisan migrate --seed
 ```

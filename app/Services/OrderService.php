@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
-class OrderService
+class OrderService implements OrderServiceInterface
 {
     private const CACHE_KEY = 'active_orders';
     private const CACHE_TTL = 30;
