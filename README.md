@@ -57,7 +57,7 @@ docker-compose exec app php artisan l5-swagger:generate
 docker-compose exec app php artisan test
 ```
 
-**Resultado esperado:** 11 tests pasando
+**Resultado esperado:** 10 tests pasando
 
 ## 📡 Endpoints de la API
 
