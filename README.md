@@ -42,29 +42,32 @@ REDIS_HOST=redis
 docker-compose up -d --build
 ```
 
-**Nota:** El Dockerfile ya instala las dependencias de Composer automáticamente.
+### 4. Instalar dependencias de Laravel
+```bash
+docker-compose exec app composer install
+```
 
-### 4. Generar la clave de la aplicación
+### 5. Generar la clave de la aplicación
 ```bash
 docker-compose exec app php artisan key:generate
 ```
 
-### 5. Limpiar configuraciones de caché
+### 6. Limpiar configuraciones de caché
 ```bash
 docker-compose exec app php artisan config:clear
 ```
 
-### 6. Ejecutar las migraciones
+### 7. Ejecutar las migraciones
 ```bash
 docker-compose exec app php artisan migrate
 ```
 
-### 7. (Opcional) Ejecutar seeders para datos de prueba
+### 8. (Opcional) Ejecutar seeders para datos de prueba
 ```bash
 docker-compose exec app php artisan db:seed
 ```
 
-### 8. (Opcional) Generar documentación Swagger
+### 9. (Opcional) Generar documentación Swagger
 ```bash
 docker-compose exec app php artisan l5-swagger:generate
 ```
@@ -141,13 +144,23 @@ app/
 ├── Repositories/
 │   ├── OrderRepositoryInterface.php
 │   └── OrderRepository.php
-└── Services/
-    └── OrderService.php
+├── Services/
+│   ├── OrderServiceInterface.php
+│   └── OrderService.php
+└── Providers/
+    └── AppServiceProvider.php
 
 database/
 ├── migrations/
+│   ├── create_orders_table.php
+│   ├── create_order_items_table.php
+│   └── create_order_logs_table.php
 ├── seeders/
+│   ├── DatabaseSeeder.php
+│   └── OrderSeeder.php
 └── factories/
+    ├── OrderFactory.php
+    └── OrderItemFactory.php
 
 tests/
 ├── Feature/
@@ -161,10 +174,10 @@ tests/
 - ✅ CRUD de órdenes con Eloquent ORM
 - ✅ Caché con Redis (TTL: 30s)
 - ✅ Validaciones con Form Requests
-- ✅ Repository Pattern
-- ✅ Service Layer
+- ✅ Repository Pattern con interfaces
+- ✅ Service Layer con interfaces
 - ✅ Inyección de Dependencias
-- ✅ Logs de cambio de estado
+- ✅ Logs de cambio de estado con timestamps
 - ✅ Tests automatizados (11 tests pasando)
 - ✅ Seeders y Factories
 - ✅ Docker Compose
@@ -184,11 +197,11 @@ docker-compose down -v
 ## 📝 Notas Técnicas
 
 - La API usa caché Redis con TTL de 30 segundos para el listado de órdenes activas
-- Las órdenes en estado "delivered" son automáticamente eliminadas de la base de datos
+- Las órdenes en estado "delivered" son automáticamente eliminadas de la base de datos y del caché
 - Todos los cambios de estado se registran en la tabla `order_logs` con timestamps
 - El total de la orden se calcula automáticamente basado en los items
 - Se invalida el caché automáticamente al crear o modificar órdenes
-- Las dependencias de Composer se instalan automáticamente durante el build del contenedor
+- La arquitectura sigue principios SOLID con interfaces para Services y Repositories
 
 ## 🔧 Comandos Útiles
 ```bash
@@ -228,6 +241,14 @@ docker-compose exec app php artisan config:clear
 docker-compose restart app
 ```
 
+### Error de vendor/autoload.php no encontrado
+
+Si el contenedor no inicia por falta de vendor:
+```bash
+docker-compose exec app composer install
+docker-compose restart app
+```
+
 ### Problemas con dependencias de Composer
 
 Si hay problemas con vendor o dependencias:
@@ -242,6 +263,8 @@ Si algo no funciona, hacer rebuild completo:
 ```bash
 docker-compose down -v
 docker-compose up -d --build
+docker-compose exec app composer install
 docker-compose exec app php artisan key:generate
+docker-compose exec app php artisan config:clear
 docker-compose exec app php artisan migrate --seed
 ```

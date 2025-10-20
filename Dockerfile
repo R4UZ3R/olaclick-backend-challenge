@@ -21,22 +21,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Definir diretório de trabalho
 WORKDIR /var/www
 
-# Copiar apenas composer files primeiro (otimização de cache)
-COPY composer.json composer.lock ./
-
-# Instalar dependências do Composer
-RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
-
-# Copiar resto do projeto
-COPY . .
-
-# Finalizar autoload
-RUN composer dump-autoload --optimize
-
-# Ajustar permissões
-RUN chown -R www-data:www-data /var/www \
-    && chmod -R 775 storage bootstrap/cache
-
 EXPOSE 8000
 
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
